@@ -1,3 +1,7 @@
+@import url(http://fonts.googleapis.com/css?family=Khand);
+@import url(http://fonts.googleapis.com/css?family=Patrick+Hand+SC);
+
+
 .margin-top-10 {
 	margin-top: 10px !important;
 }
@@ -20,4 +24,38 @@
 
 .right-5 {
 	right: 5px !important;
+}
+
+body {
+	background: #fff url('../fimages/20.jpg') repeat right top;
+	font-family: 'Khand', sans-serif;
+}
+
+.container {
+	background: #fff;
+	padding: 50px;
+	margin: 20px auto;
+	border-radius: 10px;
+	opacity: 0.8;
+}
+
+.row {
+	opacity: 1 !important;
+}
+
+.brand {
+	color: #F24535;
+	font-family: 'Patrick Hand SC', cursive;
+}
+
+#name {
+	color: #F24535;
+}
+
+h1, h2 {
+	color: #F2884B;
+}
+
+.nav {
+	font-size: 20px;
 }
