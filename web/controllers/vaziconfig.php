@@ -3,7 +3,7 @@ return array(
 	'db' => array(
 			'host' => 'localhost',
 			'user' => 'root',
-			'password' => 'preeti',
+			'password' => 'A658:-}m',
 			'dataBase' => 'forum',
 		),
 	'company' => '',
