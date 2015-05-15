@@ -7,6 +7,8 @@
 
 	<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+
 
 	<style type="text/css">
 		.correctbtn{
@@ -47,7 +49,7 @@
 		<div class="row display-none margin-top-10" id="ans">
 				<div class="row">
 					<div class="form-group">
-						<div class="col-xs-6 col-md-4">
+						<div class="col-xs-12">
 						 	<label for="tans"></label> 
 					     	<textarea id="tans" class="form-control" placeholder="Add Your Answer"  name="tan"></textarea><br>
 					     	<button type="submit" class="btn btn-default pull-left" id="enterAnswer">Submit</button>
@@ -92,6 +94,7 @@
 				})
 			}
 		$(document).ready(function() {
+			CKEDITOR.replace( 'tans' );
 
 			var loggedInUser;
 			var askedby;
@@ -186,7 +189,7 @@
 				$.ajax({
 					method: "POST",
 					url: "apis/answ.php",
-					data: {comment: $("#tans").val(), qid: question_id }
+					data: {comment: CKEDITOR.instances.tans.getData(), qid: question_id }
 				}).done(function(data) {
 					if (data=="success") {
 						$("#ans").slideToggle();

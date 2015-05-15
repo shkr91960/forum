@@ -38,6 +38,7 @@ class vaziquestions{
 		$result = $this->query->select($param);
 
 		$this->result[0]['name'] = $result[0]['name'];
+		$this->result[0]['question'] = html_entity_decode($this->result[0]['question']);
 
 		header('Content-type: application/json');
 		echo json_encode($this->result);
@@ -54,8 +55,8 @@ class vaziquestions{
 		echo json_encode($this->result);
 	}
 	public function post_question(){
-		$title = $_POST['title'];
-		$ques = $_POST['ta'];
+		$title = htmlentities($_POST['title']);
+		$ques = htmlentities($_POST['ta']);
 
 		$user = $this->session->get_userInfo();
 

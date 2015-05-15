@@ -7,6 +7,7 @@
 
 		<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
 		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
 		
 	</head>
 	<body>
@@ -33,7 +34,7 @@
 				<form>
 					<div class="row">
 					  <div class="form-group">
-      					<div class="col-xs-6 col-md-4">
+      					<div class="col-xs-12">
 						   <label for="title">Title</label>
 						   <input type="text" id="title" class="form-control"><br>
 						</div>
@@ -42,7 +43,7 @@
 					
 					<div class="row">
 						<div class="form-group">
-							<div class="col-xs-6 col-md-4">
+							<div class="col-xs-12">
 							 	<label for="tarea">Question Description</label> 
 						     	<textarea id="tarea" class="form-control"></textarea><br>
 						     	<div class="btn btn-default pull-left" id="enterQuestion">Submit</div>
@@ -62,7 +63,10 @@
 			</div>
 		</section>
 		<script type="text/javascript">
+
+			
 			$(document).ready(function() {
+				CKEDITOR.replace( 'tarea' );
 
 				$.ajax({
 					type: "GET",
@@ -124,10 +128,12 @@
 				//$("#ask").hide();
 
 				$("#enterQuestion").click(function() {
+					console.log($("#tarea").val());
+					console.log(CKEDITOR.instances.tarea.getData());
 					$.ajax({
 						method: "POST",
 						url: "apis/ques.php",
-						data: {title: $("#title").val() , ta: $("#tarea").val() }
+						data: {title: $("#title").val() , ta: CKEDITOR.instances.tarea.getData() }
 					}).done(function(data) {
 						if (data=="success") {
 							$("#ask").slideToggle();

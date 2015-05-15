@@ -79,6 +79,7 @@ class vazicomment{
 
 			//$this->result->name = new StdClass;
 			$this->result[$key]['name'] = $result[0]['name'];
+			$this->result[$key]['comment'] = html_entity_decode($this->result[$key]['comment']);
 
 			//echo json_encode($result[0]['name']);
 			
@@ -88,8 +89,8 @@ class vazicomment{
 		echo json_encode($this->result);
 	}
 	public function post_answer(){
-		$answ = $_POST['comment'];
-		$qid = $_POST['qid'];
+		$answ = htmlentities($_POST['comment']);
+		$qid = htmlentities($_POST['qid']);
 
 		$user = $this->session->get_userInfo();
 
