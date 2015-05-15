@@ -1,0 +1,118 @@
+<html>
+	<head>
+		<title>Forums Project</title>
+
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
+
+		<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<section class="container">
+			<!-- Navigation Begins Here -->
+			<div class="row margin-top-10">
+				<ul class="nav nav-tabs">
+					<li role="presentation"><a href="/">Home</a></li>
+					<li role="presentation"><a href="registration.html">New User Registration</a></li>
+					<li role="presentation" class="active"><a href="login.html">Login</a></li>
+				</ul>
+			</div>
+			<!-- Navigation Ends Here -->
+			
+			<!-- Login begins here -->
+			<div class="row margin-top-10 display-none" id="success-flash">
+				<div type="submit" class="btn btn-info pull-right" id="query" >Successfully Logged In</div>
+			</div>
+			<div class="row"><br>
+				<form>
+
+					<div class="row">
+					  <div class="form-group">
+      					<div class="col-xs-6 col-md-4">
+						   <label for="email">Email</label>
+						   <input type="email" class="form-control" id="email" name="eid" value=""><br>
+						</div>
+					   </div>
+					</div>
+					
+					<div class="row">
+						<div class="form-group">
+							<div class="col-xs-6 col-md-4">
+							 	<label for="password">Password</label> 
+						     	<input type="password" class="form-control" id="password" name="pwrd" value=""><br>
+						    </div> 
+						</div>
+					</div>	
+					<div class="btn btn-default" id="login-btn">Log In</div><br><br>
+					<div class="btn btn-primary btn-lg" id="login">Create Account</div>
+				</form>
+			</div>
+			<!-- Login ends here -->
+		</section>
+
+		<script type="text/javascript">
+			$(document).ready(function() {
+				function getParameterByName(name) {
+				    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+				    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+				        results = regex.exec(location.search);
+				    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+				}
+
+				var additionalParameter = getParameterByName("add");
+
+				$('#login-btn').click(function(e) {
+					var email = $("#email").val();
+					var password = $("#password").val();
+					
+					$.ajax({
+						type: "GET",
+						url: "apis/login.php",
+						dataType: 'text',
+						async: false,
+						headers: {
+							"Authorization": "Basic " + btoa(email + ":" + password)
+						}
+					}).done(function(data) {
+
+						$("#success-flash").fadeIn(2000, function() {
+							var redirectURL = getParameterByName("redirect");
+
+							if (redirectURL) {
+								window.location.href = redirectURL + (additionalParameter?"&" + additionalParameter:"");
+							} else {
+								window.location.href = "/";
+							}
+						})
+							
+					});
+				});	
+				$('#login').click(function() {
+						window.location.href = "/registration.html?redirect=/index.html";
+				});
+				$('#btn btn-default pull-left').click(function(e) {
+					var email = $("#email").val();
+					var password = $("#password").val();
+					
+					$.ajax({
+						type: "GET",
+						url: "apis/login.php",
+						dataType: 'text',
+						async: false,
+						headers: {
+							"Authorization": "Basic " + btoa(email + ":" + password)
+						}
+					}).done(function(data) {
+						var redirectURL = getParameterByName("redirect");
+						
+						if (redirectURL) {
+							window.location.href = redirectURL;
+						}
+
+					});
+				});	
+			});
+		</script>
+	</body>
+</html>

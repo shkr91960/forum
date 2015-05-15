@@ -1,0 +1,144 @@
+<html>
+	<head>
+		<title>Forums Project</title>
+
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
+
+		<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		
+	</head>
+	<body>
+		<section class="container">
+			<div class="row margin-top-10">
+				<h4 class="pull-right">Logged in - <span id="name">Guest User</span> </h4>
+			</div>
+			<div class="row margin-top-10">
+				<ul class="nav nav-tabs">
+					<li role="presentation" class="active"><a href="/">Home</a></li>
+					<li role="presentation" class="navtohide"><a href="registration.html">New User Registration</a></li>
+					<li role="presentation" class="navtohide"><a href="login.html">Login</a></li>
+				</ul>
+			</div>
+			<div class="row margin-top-10">
+					<button type="submit" class="btn btn-default pull-right" id="query" >You can ask your question</button>
+					
+			</div>
+			<div class="row margin-top-10 display-none" id="success-flash">
+				<div type="submit" class="btn btn-info pull-right" id="quer" >Question Successfully Submitted</div>
+			</div>
+			<div class="row display-none margin-top-10" id="ask">
+				<form>
+					<div class="row">
+					  <div class="form-group">
+      					<div class="col-xs-6 col-md-4">
+						   <label for="title">Title</label>
+						   <input type="text" id="title" class="form-control"><br>
+						</div>
+					   </div>
+					</div>
+					
+					<div class="row">
+						<div class="form-group">
+							<div class="col-xs-6 col-md-4">
+							 	<label for="tarea">Question Description</label> 
+						     	<textarea id="tarea" class="form-control"></textarea><br>
+						     	<div class="btn btn-default pull-left" id="enterQuestion">Submit</div>
+						    </div> 
+						</div>
+					</div>
+				</form>	
+			</div>	
+            
+			<div class="row">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<th>Questions</th>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</section>
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				$.ajax({
+					type: "GET",
+					url: "apis/getuserinfo.php",
+					dataType: "json",
+					success: function(data) {
+						//console.log(data);
+						$(".navtohide").hide();
+						$("#name").html(data[0].name);
+
+					}
+				});
+
+				function getParameterByName(name) {
+				    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+				    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+				        results = regex.exec(location.search);
+				    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+				}
+
+				var askQuestion = function() {
+					$.ajax({
+						type: "GET",
+						url: "apis/login.php",
+						dataType: 'text',
+						async: false,
+						success: function (data){
+							$("#ask").slideToggle();
+						},
+						error: function (data) {
+							if (data.statusText == 'Unauthorized') {
+								window.location.href = "/login.html?redirect=/index.html?ask=true";
+							};
+						}
+					});
+				}
+
+				var ask = getParameterByName("ask");
+
+				if (ask === 'true') {
+					askQuestion();
+				};
+
+				var getQuestions = function() {
+					$.ajax({
+						method: "GET",
+						url: "apis/getquestions.php",
+						dataType: "json"
+					}).done(function( data ) {
+						$("tbody").html("");
+						for (var i = data.length - 1; i >= 0; i--) {
+							$("tbody").append("<tr><td><a href='retrieve_post.html?question_id=" + data[i]['qid'] + "'>" + data[i]['title'] +  "</a></td></tr>");
+						};
+					});
+				}
+
+				getQuestions();
+
+				//$("#ask").hide();
+
+				$("#enterQuestion").click(function() {
+					$.ajax({
+						method: "POST",
+						url: "apis/ques.php",
+						data: {title: $("#title").val() , ta: $("#tarea").val() }
+					}).done(function(data) {
+						if (data=="success") {
+							$("#ask").slideToggle();
+							$("#success-flash").fadeIn(3000,function() {
+								$("#success-flash").fadeOut(3000, getQuestions);
+							});
+						}
+					});
+				});
+
+				$("#query").click(askQuestion);
+	  	 	});	
+		</script>
+	</body>
+</html>

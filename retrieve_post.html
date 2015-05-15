@@ -1,0 +1,203 @@
+<html>
+<head>
+	<title>Forum Post</title>
+
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+
+	<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+	<style type="text/css">
+		.correctbtn{
+			display: none;
+		}
+	</style>
+</head>
+<body>
+
+	<section class="container">
+		<div class="row margin-top-10">
+			<h4 class="pull-right">Logged in - <span id="name">Guest User</span> </h4>
+		</div>
+		<div class="row margin-top-10">
+			<ul class="nav nav-tabs">
+				<li role="presentation"><a href="/">Home</a></li>
+				<li role="presentation" class="navtohide"><a href="registration.html">New User Registration</a></li>
+				<li role="presentation" class="navtohide"><a href="login.html">Login</a></li>
+			</ul>
+		</div>
+
+		<div class="row">
+			<section class="col-xs-12">
+				<h2><span id="title"></span></h2>
+				<p class="text-muted pull-right">Question Asked by - <span id="askedby" class=""></span></p>
+			</section>
+			<section class="col-xs-12">
+				<p id="question"></p>
+			</section>
+		</div>
+		<div class="row margin-top-10">
+					<button type="submit" class="btn btn-primary pull-right" id="ans1" >Comment</button>
+			</div>
+		<div class="row margin-top-10 display-none" id="success-flash">
+				<div type="submit" class="btn btn-info pull-right" >Answer Successfully Submitted</div>
+			</div>
+		<div class="row display-none margin-top-10" id="ans">
+				<div class="row">
+					<div class="form-group">
+						<div class="col-xs-6 col-md-4">
+						 	<label for="tans"></label> 
+					     	<textarea id="tans" class="form-control" placeholder="Add Your Answer"  name="tan"></textarea><br>
+					     	<button type="submit" class="btn btn-default pull-left" id="enterAnswer">Submit</button>
+					    </div> 
+					</div>
+				</div>
+			</div>	
+       	<div class="row" id="answers">
+
+		</div>     
+	</section>
+
+	<script type="text/javascript">
+		var toggleCorrect = function(commentId, correct) {
+				console.log(commentId, correct);
+
+				$.ajax({
+					url: "/apis/markcorrect.php",
+					method: "POST",
+					data: {commentId: commentId, correct:correct},
+					success: function(data) {
+						if ($("#comment" + commentId).hasClass("btn-default") ) {
+							$("#comment" + commentId)
+								.removeClass("btn-default")
+								.addClass("btn-success");
+						} else {
+							$("#comment" + commentId)
+								.removeClass("btn-success")
+								.addClass("btn-default");
+						};
+
+						if ($("#panel" + commentId).hasClass("panel-warning") ) {
+							$("#panel" + commentId)
+								.removeClass("panel-warning")
+								.addClass("panel-success");
+						} else {
+							$("#panel" + commentId)
+								.removeClass("panel-success")
+								.addClass("panel-warning");
+						};
+					}
+				})
+			}
+		$(document).ready(function() {
+
+			var loggedInUser;
+			var askedby;
+
+			var displayCorrect = function() {
+				$(".correctbtn").show();
+			}
+
+			function getParameterByName(name) {
+			    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+			    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+			        results = regex.exec(location.search);
+			    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+			}
+
+			var question_id = getParameterByName("question_id");
+
+			$.ajax({
+					method: "post",
+					url: "/apis/getforumpost.php",
+					data: { "question_id" : question_id },
+					dataType: "json"
+				}).done(function( data ) {
+					$("#title").append(data[0]["title"]);
+					$("#question").append(data[0]["question"]);
+					$("#askedby").html(data[0].name);
+					askedby = data[0];
+					$.ajax({
+						type: "GET",
+						url: "apis/getuserinfo.php",
+						dataType: "json",
+						success: function(data) {
+							//console.log(data);
+							$(".navtohide").hide();
+							$("#name").html(data[0].name);
+							loggedInUser = data[0];
+						}
+					});
+				});
+
+			var answer = function() {
+					$.ajax({
+						type: "GET",
+						url: "apis/login.php",
+						dataType: 'text',
+						async: false,
+						success: function (data){
+							$("#ans").slideToggle();
+						},
+						error: function (data) {
+							if (data.statusText == 'Unauthorized') {
+								window.location.href = "/login.html?redirect=/retrieve_post.html?question_id=" + question_id + "&add=ans=true";
+							};
+						}
+					});
+				}
+
+			var ans = getParameterByName("ans");
+
+				if (ans === 'true') {
+					answer();
+				};
+			
+			var getAnswers = function() {
+				$.ajax({
+					method: "POST",
+					url: "apis/getanswer.php",
+					dataType: "json",
+					data:{qid:question_id}
+				}).done(function( data ) {
+					$("#answers").html("<h1>Answers</h1><hr>");
+
+					for (var i = data.length - 1; i >= 0; i--) {
+						var buttonType = data[i]['correct']?'success':'default';
+						var panelType = data[i]['correct']?'success':'warning';
+						$("#answers").append('<div id="panel' + data[i]['commentId'] + '" class="panel panel-' + panelType + '"><div class="panel-heading position-relative"><h5>Answered by: <strong>' + data[i]['name'] + '</strong></h5>' + "<button class='correctbtn btn btn-" + buttonType + " btn-sm position-absolute top-5 right-5' id='comment" + data[i]['commentId'] + "' onclick='toggleCorrect("+ data[i]['commentId'] +","+ data[i]["correct"] +")'>Correct</button>" + '</div><div class="panel-body">' + data[i]['comment'] + '</div></div>');
+
+						//("<tr><td>" + data[i]['comment'] + "<button class='correctbtn btn btn-" + buttonType + " btn-sm pull-right' onclick='toggleCorrect("+ data[i]['commentId'] +","+ data[i]["correct"] +")'>Correct</button></td></tr>");
+					};
+
+					if (loggedInUser.userid == askedby.userid) {
+						displayCorrect(); 
+					};
+				});
+			}
+
+			getAnswers();
+
+				//$("#ask").hide();
+
+			$("#enterAnswer").click(function() {
+				$.ajax({
+					method: "POST",
+					url: "apis/answ.php",
+					data: {comment: $("#tans").val(), qid: question_id }
+				}).done(function(data) {
+					if (data=="success") {
+						$("#ans").slideToggle();
+						$("#success-flash").fadeIn(3000,function() {
+							$("#success-flash").fadeOut(3000,getAnswers);
+						});
+					}
+				});
+			});
+
+			$("#ans1").click(answer);
+		});
+	</script>
+</body>
+</html>

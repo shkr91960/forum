@@ -1,0 +1,85 @@
+<html>
+	<head>
+		<title>Forums Project</title>
+
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
+
+		<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<section class="container">
+			<!-- Navigation Begins Here -->
+			<div class="row margin-top-10">
+				<ul class="nav nav-tabs">
+					<li role="presentation"><a href="/">Home</a></li>
+					<li role="presentation" class="active"><a href="registration.html">New User Registration</a></li>
+					<li role="presentation"><a href="login.html">Login</a></li>
+				</ul>
+			</div>
+			<!-- Navigation Ends Here -->
+
+			<!-- Registration form begins here -->
+			<div class="row"><br>
+				<form action="apis/registration.php" method="post">
+
+					<h1>Sign Up</h1><br>
+					<div class="row">
+					  <div class="form-group">
+      					<div class="col-xs-6 col-md-4">
+						   <label for="name">First Name</label>
+						   <input type="text" id="name" class="form-control" placeholder="First Name" name="first"><br>
+						</div>
+					   </div>
+					</div>
+					
+					<div class="row">
+						<div class="form-group">
+							<div class="col-xs-6 col-md-4">
+							 	<label for="name1">Last name</label> 
+						     	<input type="text" id="name1" class="form-control" placeholder="Last name" name="last"><br>
+						    </div> 
+						</div>
+					</div>	
+					
+					<div class="row">
+					    <div class="form-group">
+                            <div class="col-xs-6 col-md-4">
+								<label for="email">Email</label> 
+					    		<input type="email" id="email" class="form-control" placeholder="E-mail" name="emailid"><br>
+					     	</div>
+					    </div>
+					</div>
+					
+					<div class="row">
+				      	<div class="form-group">
+				      		<div class="col-xs-6 col-md-4">
+								<label for="password">Enter Password</label> 
+					    		<input type="password" id="password" class="form-control" placeholder="Enter Password" name="passwrd"><br>
+					    	</div>
+					    </div>		
+					</div>
+					
+					<div class="row">
+						<div class="form-group">
+							<div class="col-xs-6 col-md-4">
+								<label for="confirm">Confirm Password</label> 
+					    		<input type="password" id="confirm" class="form-control" placeholder="Confirm Password" name="cpasswrd"><br>
+					    	</div>
+					    </div>		
+					</div>
+
+					By clicking Sign Up, you agree to our Terms and<br> that you have read our Data Policy, including our Cookie Use.<br><br>
+
+					<p>
+              			<button type="submit" class="btn btn-primary btn-lg" name="buttn">Sign Up</button>
+					</p>
+				</form>
+			</div>
+			<!-- Registration form ends here -->
+		</section>
+	</body>
+</html>
+
+
